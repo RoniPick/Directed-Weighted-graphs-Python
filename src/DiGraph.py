@@ -44,8 +44,8 @@ class DiGraph(GraphInterface):
         """if the source and the dest are the same or one of them doesn't exist in the graph -> do nothing"""
         if id1 not in self.nodes.keys() or id2 not in self.nodes.keys() or id1 == id2:
             return False
-        if id2 in self.nodes.get(id1).keys():  # if the edge exist in the edge's dictionary -> do nothing
-            return False
+        if id2 in self.out_edges.get(id1).keys():  # if the edge exist in the edge's dictionary -> do nothing
+            return False ## 1:3 1:
         """if the edge isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
         self.out_edges[id1][id2] = weight  # add the information to the dictionary in the src, dest location
         self.in_edges[id2][id1] = weight  # add the information to the dictionary in the dest, src location
