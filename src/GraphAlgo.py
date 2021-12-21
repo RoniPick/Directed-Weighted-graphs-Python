@@ -7,8 +7,8 @@ from src.GraphAlgoInterface import GraphAlgoInterface
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self):
-        self.graph = GraphInterface.GraphInterface.__init__(self)
+    def __init__(self, g:GraphInterface = None ):
+        self.graph = g
 
     def get_graph(self) -> GraphInterface:
         return self.graph

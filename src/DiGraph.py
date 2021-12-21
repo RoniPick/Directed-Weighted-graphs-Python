@@ -13,7 +13,7 @@ class DiGraph(GraphInterface):
         """a nested dictionary that represents all the in edges to a node. dest:int -> source:int -> weight:float"""
         self.MC = 0  # a counter of all the changes in the graph
 
-    def __int__(self, graph):  # an object constructor
+    def __init__(self, graph):  # an object constructor
         self.nodes = graph.nodes.copy()
         self.out_edges = graph.out_edges.copy()
         self.in_edges = graph.in_edges.copy()
@@ -45,7 +45,7 @@ class DiGraph(GraphInterface):
         if id1 not in self.nodes.keys() or id2 not in self.nodes.keys() or id1 == id2:
             return False
         if id2 in self.out_edges.get(id1).keys():  # if the edge exist in the edge's dictionary -> do nothing
-            return False ## 1:3 1:
+            return False
         """if the edge isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
         self.out_edges[id1][id2] = weight  # add the information to the dictionary in the src, dest location
         self.in_edges[id2][id1] = weight  # add the information to the dictionary in the dest, src location
@@ -75,7 +75,7 @@ class DiGraph(GraphInterface):
             return False
         """if the edge doesn't exist in the edge's dictionary (the destination value isn't in the source dictionary)
         -> do nothing"""
-        if node_id2 not in self.nodes.get(node_id1).keys():
+        if node_id2 not in self.out_edges.get(node_id1).keys():
             return False
         del self.out_edges[node_id1][node_id2]  # delete the edge from the out dictionary (src to dest)
         del self.in_edges[node_id2][node_id1]  # delete the edge from the in dictionary (dest to src)
