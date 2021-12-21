@@ -1,5 +1,5 @@
 from src.GraphInterface import GraphInterface
-from Node import Node
+from src.Node import Node
 from Edge import Edge
 
 
@@ -13,11 +13,11 @@ class DiGraph(GraphInterface):
         """a nested dictionary that represents all the in edges to a node. dest:int -> source:int -> weight:float"""
         self.MC = 0  # a counter of all the changes in the graph
 
-    def __init__(self, graph):  # an object constructor
-        self.nodes = graph.nodes.copy()
-        self.out_edges = graph.out_edges.copy()
-        self.in_edges = graph.in_edges.copy()
-        self.MC = graph.MC
+    # def __init__(self, graph):  # an object constructor
+    #     self.nodes = graph.nodes.copy()
+    #     self.out_edges = graph.out_edges.copy()
+    #     self.in_edges = graph.in_edges.copy()
+    #     self.MC = graph.MC
 
     def v_size(self) -> int:
         return len(self.nodes)
@@ -42,9 +42,9 @@ class DiGraph(GraphInterface):
 
     def add_edge(self, id1: int, id2: int, weight: float) -> bool:
         """if the source and the dest are the same or one of them doesn't exist in the graph -> do nothing"""
-        if id1 not in self.nodes.keys() or id2 not in self.nodes.keys() or id1 == id2:
+        if not self.nodes.__contains__(id1) or not self.nodes.__contains__(id2) or id1 == id2:
             return False
-        if id2 in self.out_edges.get(id1).keys():  # if the edge exist in the edge's dictionary -> do nothing
+        if self.edge_exist(id1, id2):  # if the edge exist in the edge's dictionary -> do nothing
             return False
         """if the edge isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
         self.out_edges[id1][id2] = weight  # add the information to the dictionary in the src, dest location
@@ -56,7 +56,9 @@ class DiGraph(GraphInterface):
         if node_id in self.nodes:  # if the node id is in the node's dictionary -> do nothing
             return False
         """if the node id isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
-        self.nodes[node_id] = Node(node_id, {'x': pos[0], 'y': pos[1], 'z': pos[2]})
+        self.nodes[node_id] = Node(node_id, location=pos)
+        self.out_edges[node_id]={}
+        self.in_edges[node_id]={}
         """add a new node to the dictionary with the node_id as his key"""
         self.MC = self.MC + 1  # increase the MC for the change in the graph
         return True
@@ -82,3 +84,8 @@ class DiGraph(GraphInterface):
         self.MC = self.MC + 1  # increase the MC for the change in the graph
         return True
 
+    def edge_exist(self, id1, id2):
+        if self.all_out_edges_of_node(id1).__contains__(id2):
+            return True
+        else:
+            return False
