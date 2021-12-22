@@ -69,6 +69,7 @@ class GraphAlgo(GraphAlgoInterface):
 
 
 
+
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
             Finds the shortest path that visits all the nodes in the list
@@ -84,9 +85,9 @@ class GraphAlgo(GraphAlgoInterface):
         maximum = 0.0
         temp = 0.0
         ans = {}
-        for srckey in self.graph.nodes:
+        for srckey in self.graph.nodes.keys():
             maximum = math.inf * (-1)
-            for destkey in self.graph.nodes:
+            for destkey in self.graph.nodes.keys():
                 if srckey != destkey:
                     temp = self.shortest_path_dist(srckey, destkey)
                     if maximum < temp:
