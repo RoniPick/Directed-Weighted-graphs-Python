@@ -8,7 +8,7 @@ from src.GraphAlgoInterface import GraphAlgoInterface
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self, g: GraphInterface = None):
+    def __init__(self, g: DiGraph() = DiGraph()):
         self.graph = g
 
     def get_graph(self) -> GraphInterface:
@@ -63,6 +63,11 @@ class GraphAlgo(GraphAlgoInterface):
             More info:
             https://en.wikipedia.org/wiki/Dijkstra's_algorithm
             """
+        d = self.Dijkstra(id1)
+        ans = list()
+        location = self.graph.nodes
+
+
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
@@ -115,6 +120,8 @@ class GraphAlgo(GraphAlgoInterface):
     def BFS(self, key): #////ALMOG TODO
         visited = {}
         # priority
+
+    def Dijkstra(self, src):
 
     def DijkstraLength(self, src) -> dict:
         g = DiGraph()
