@@ -1,29 +1,38 @@
 import json
 from typing import List
 from src import GraphInterface
-from DiGraph import DiGraph
+from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
 
 
 class GraphAlgo(GraphAlgoInterface):
 
-    def __init__(self, g:GraphInterface = None ):
+    def __init__(self, g: GraphInterface = None):
         self.graph = g
 
     def get_graph(self) -> GraphInterface:
         return self.graph
 
     def load_from_json(self, file_name: str) -> bool:
-        dict = {}
-        with open(file_name, "r") as f:
-            dict = json.load(f)
-        for node in dict["nodes"].values():
-            self.add_node(node["id"], (node['pos']['x'], node['pos']['y'], node['pos']['Z']))
-        for src, out in dict["edges"].items():
-            for dest, w in out.items():
-                print(src, dest, w)
-                self.connect(int(src), int(dest), w)
-        return True
+        try:
+            with open(file_name) as f:
+                graph = DiGraph()
+                data = json.load(f)
+            for node in data["nodes"]:
+                if "pos" in node:
+                    pos = tuple(map(float, str(node["pos"]).split(",")))
+                else:
+                    pos = None
+                graph.add_node(node["id"], (node['pos']['x'], node['pos']['y'], node['pos']['Z']))
+            for edge in dict["edges"]:
+                graph.connect(edge["src"], edge["dest"], edge["w"])
+            self.graph = graph
+            return True
+        except Exception as exception:
+            print(exception)
+            return False
+        finally:
+            file_name.close()  # closing the file
 
     def save_to_json(self, file_name: str) -> bool:
         with open(file_name, 'w') as file:

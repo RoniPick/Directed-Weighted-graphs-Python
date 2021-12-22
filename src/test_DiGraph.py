@@ -1,6 +1,5 @@
 from unittest import TestCase
 from DiGraph import DiGraph
-from Node import Node
 
 
 # graph creator of 10 nodes 12 edges.
@@ -80,7 +79,7 @@ class TestDiGraph(TestCase):
         g.remove_node(0)
         v = g.v_size()
         e = g.e_size()
-        self.assertEqual(9 ,v)
+        self.assertEqual(9, v)
         self.assertEqual(9, e)
 
     def test_remove_edge(self):
@@ -92,7 +91,7 @@ class TestDiGraph(TestCase):
         g.remove_edge(2, 4)
         e = g.e_size()
         self.assertEqual(9, e)
-        g.remove_edge(8, 9) # an edge that doesn't exists
+        g.remove_edge(8, 9)  # an edge that doesn't exists
         e = g.e_size()
         self.assertEqual(9, e)
 

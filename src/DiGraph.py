@@ -1,13 +1,11 @@
 from src.GraphInterface import GraphInterface
 from src.Node import Node
-from Edge import Edge
 
 
 class DiGraph(GraphInterface):
 
     def __init__(self):  # an empty constructor
         self.nodes = {}  # a dictionary of node_id: int -> node_info: Node
-        # self.edges = {}
         self.out_edges = {}
         """a nested dictionary that represents all the out edges from a node. source:int -> dest:int -> weight:float"""
         self.in_edges = {}
