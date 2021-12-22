@@ -1,10 +1,12 @@
 import json
 import math
+import queue
 from typing import List
 from src import GraphInterface
 from src.DiGraph import DiGraph
 from src.GraphAlgoInterface import GraphAlgoInterface
-
+import matplotlib.pyplot as plt
+from queue import PriorityQueue
 
 class GraphAlgo(GraphAlgoInterface):
 
@@ -67,9 +69,6 @@ class GraphAlgo(GraphAlgoInterface):
         ans = list()
         location = self.graph.nodes
 
-
-
-
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
             Finds the shortest path that visits all the nodes in the list
@@ -90,6 +89,7 @@ class GraphAlgo(GraphAlgoInterface):
             for destkey in self.graph.nodes.keys():
                 if srckey != destkey:
                     temp = self.shortest_path_dist(srckey, destkey)
+                    self.shortest_path(srckey, destkey)
                     if maximum < temp:
                         maximum = temp
 
@@ -101,8 +101,9 @@ class GraphAlgo(GraphAlgoInterface):
             if ans[i] < minimum:
                 minimum = ans[i]
                 minNode = i
+        t = (minNode, minimum)
 
-        return minNode
+        return t
 
     def shortest_path_dist(self, src, dest):
         if self.isconnected() and src != dest:
@@ -123,7 +124,30 @@ class GraphAlgo(GraphAlgoInterface):
         # priority
 
     def Dijkstra(self, src):
-        g = DiGraph()
+        dist = {}
+        prev = {}
+        neighbours= queue.PriorityQueue(maxsize=0)
+
+        for node in self.get_graph().get_all_v():
+            node.weight = math.inf
+            node.tag = 0
+
+        dist[src] = 0
+        neighbours.put(src)
+        while neighbours.not_empty:
+            temp = neighbours.get()
+            # for node in self.get_graph().all_out_edges_of_node(temp)
+
+
+
+    def relax(self, src:int, dest:int)-> bool:
+        if self.get_graph().get_all_v().get(dest) <= self.get_graph().nodes.get(src) + self.get_graph().all_out_edges_of_node(src).get(dest):
+            return False
+        d = self.get_graph().nodes.get(dest)
+
+
+
+
 
     def DijkstraLength(self, src) -> dict:
         g = DiGraph()
@@ -136,3 +160,16 @@ class GraphAlgo(GraphAlgoInterface):
             Otherwise, they will be placed in a random but elegant manner.
             @return: None
             """
+        x = [1,2,3]
+        y = [2,4,1]
+        plt.plot(x, y, color='indigo', linestyle='-', linewidth = 2, marker='o', markerfacecolor='gray', markersize=15)
+        plt.xlim()
+        plt.ylim()
+        plt.xlabel('x - axis')
+        plt.ylabel('y - axis')
+        plt.title('OOP Ex3')
+        plt.show()
+
+    if __name__ == "__main__":
+
+
