@@ -75,6 +75,8 @@ class DiGraph(GraphInterface):
             del self.out_edges[j][node_id]  # delete the edge from the out dictionary (src to dest)
             self.edgeSize -= 1
 
+        self.all_in_edges_of_node(node_id).clear()
+        self.all_out_edges_of_node(node_id).clear()
         del self.nodes[node_id]  # delete the node from the dictionary
         self.nodeSize -= 1
         self.MC = self.MC + 1  # increase the MC for the change in the graph
