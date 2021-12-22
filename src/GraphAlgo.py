@@ -1,4 +1,5 @@
 import json
+import math
 from typing import List
 from src import GraphInterface
 from src.DiGraph import DiGraph
@@ -75,6 +76,49 @@ class GraphAlgo(GraphAlgoInterface):
             Finds the node that has the shortest distance to it's farthest node.
             :return: The nodes id, min-maximum distance
             """
+        maximum = 0.0
+        temp = 0.0
+        ans = {}
+        for srckey in self.graph.nodes:
+            maximum = math.inf * (-1)
+            for destkey in self.graph.nodes:
+                if srckey != destkey:
+                    temp = self.shortest_path_dist(srckey, destkey)
+                    if maximum < temp:
+                        maximum = temp
+
+            ans[srckey] = maximum
+
+        minimum = math.inf
+        minNode = None
+        for i in ans:
+            if ans[i] < minimum:
+                minimum = ans[i]
+                minNode = i
+
+        return minNode
+
+    def shortest_path_dist(self, src, dest):
+        if self.isconnected() and src != dest:
+            shortest = self.DijkstraLength(src)
+            return shortest.get(dest)
+        return -1
+
+    def isconnected(self) -> bool:
+        for nodeid in self.graph.nodes:
+            curr = self.graph.nodes[nodeid]
+            if not self.BFS(curr):
+                return False
+
+        return True
+
+    def BFS(self, key): #////ALMOG TODO
+        visited = {}
+        # priority
+
+    def DijkstraLength(self, src) -> dict:
+        g = DiGraph()
+        g = self.graph
 
     def plot_graph(self) -> None:
         """
