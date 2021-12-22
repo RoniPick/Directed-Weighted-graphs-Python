@@ -7,12 +7,14 @@ class DiGraph(GraphInterface):
 
     def __init__(self):  # an empty constructor
         self.nodes = {}  # a dictionary of node_id: int -> node_info: Node
+        # self.edges = {}
         self.out_edges = {}
         """a nested dictionary that represents all the out edges from a node. source:int -> dest:int -> weight:float"""
         self.in_edges = {}
         """a nested dictionary that represents all the in edges to a node. dest:int -> source:int -> weight:float"""
         self.MC = 0  # a counter of all the changes in the graph
-
+        self.nodeSize = 0
+        self.edgeSize = 0
     # def __init__(self, graph):  # an object constructor
     #     self.nodes = graph.nodes.copy()
     #     self.out_edges = graph.out_edges.copy()
@@ -20,13 +22,10 @@ class DiGraph(GraphInterface):
     #     self.MC = graph.MC
 
     def v_size(self) -> int:
-        return len(self.nodes)
+        return self.nodeSize
 
     def e_size(self) -> int:
-        ans = 0
-        for k, v in self.in_edges.items():
-            ans = ans + len(v)
-        return ans
+        return self.edgeSize
 
     def get_all_v(self) -> dict:
         return self.nodes
@@ -49,6 +48,7 @@ class DiGraph(GraphInterface):
         """if the edge isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
         self.out_edges[id1][id2] = weight  # add the information to the dictionary in the src, dest location
         self.in_edges[id2][id1] = weight  # add the information to the dictionary in the dest, src location
+        self.edgeSize += 1
         self.MC = self.MC + 1
         return True
 
@@ -57,8 +57,9 @@ class DiGraph(GraphInterface):
             return False
         """if the node id isn't in the node's dictionary -> we create a new node and add him to the dictionary"""
         self.nodes[node_id] = Node(node_id, location=pos)
-        self.out_edges[node_id]={}
-        self.in_edges[node_id]={}
+        self.out_edges[node_id] = {}
+        self.in_edges[node_id] = {}
+        self.nodeSize += 1
         """add a new node to the dictionary with the node_id as his key"""
         self.MC = self.MC + 1  # increase the MC for the change in the graph
         return True
@@ -69,14 +70,15 @@ class DiGraph(GraphInterface):
         sizeout = self.all_out_edges_of_node(node_id)
         sizein = self.all_in_edges_of_node(node_id)
         for k in sizeout:  # for all the nodes that have an in edge from the node_id node
-            # self.in_edges[k].pop(node_id)
             del self.in_edges[k][node_id]  # delete the edge from the in dictionary (dest to src)
-            self.e_size()-1;
+            self.edgeSize -= 1
+
         for j in sizein:
-        #     # self.out_edges[j].pop(node_id)
             del self.out_edges[j][node_id]  # delete the edge from the out dictionary (src to dest)
+            self.edgeSize -= 1
 
         del self.nodes[node_id]  # delete the node from the dictionary
+        self.nodeSize -= 1
         self.MC = self.MC + 1  # increase the MC for the change in the graph
 
     def remove_edge(self, node_id1: int, node_id2: int) -> bool:
@@ -89,6 +91,7 @@ class DiGraph(GraphInterface):
             return False
         del self.out_edges[node_id1][node_id2]  # delete the edge from the out dictionary (src to dest)
         del self.in_edges[node_id2][node_id1]  # delete the edge from the in dictionary (dest to src)
+        self.edgeSize -= 1
         self.MC = self.MC + 1  # increase the MC for the change in the graph
         return True
 

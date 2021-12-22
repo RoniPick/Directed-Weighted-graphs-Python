@@ -8,18 +8,20 @@ def graph_creator():
     g = DiGraph()
     for i in range(10):
         g.add_node(i)
-    g.add_edge(0, 1, 1)
-    g.add_edge(0, 8, 2)
-    g.add_edge(9, 0, 1)
+
     g.add_edge(1, 5, 2.5)
+    g.add_edge(8, 5, 3)
     g.add_edge(1, 4, 3)
     g.add_edge(4, 3, 1)
-    g.add_edge(2, 4, 1.5)
-    g.add_edge(3, 2, 0.5)
+    g.add_edge(0, 1, 1)
     g.add_edge(7, 6, 1)
     g.add_edge(6, 7, 1)
+    g.add_edge(3, 2, 0.5)
+    g.add_edge(9, 0, 1)
+    g.add_edge(0, 8, 2)
     g.add_edge(5, 7, 4)
-    g.add_edge(8, 5, 3)
+    g.add_edge(2, 4, 1.5)
+
     return g
 
 
@@ -82,4 +84,15 @@ class TestDiGraph(TestCase):
         self.assertEqual(9, e)
 
     def test_remove_edge(self):
-        self.fail()
+        g = graph_creator()
+        g.remove_edge(0, 1)
+        e = g.e_size()
+        self.assertEqual(11, e)
+        g.remove_edge(7, 6)
+        g.remove_edge(2, 4)
+        e = g.e_size()
+        self.assertEqual(9, e)
+        g.remove_edge(8, 9) # an edge that doesn't exists
+        e = g.e_size()
+        self.assertEqual(9, e)
+
