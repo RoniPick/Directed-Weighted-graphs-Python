@@ -122,6 +122,7 @@ class GraphAlgo(GraphAlgoInterface):
         # priority
 
     def Dijkstra(self, src):
+        g = DiGraph()
 
     def DijkstraLength(self, src) -> dict:
         g = DiGraph()
