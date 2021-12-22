@@ -33,20 +33,37 @@ class TestDiGraph(TestCase):
         g = graph_creator()
         self.assertEqual(12, g.e_size())
 
-    # def test_get_all_v(self):
-    #     self.fail()
-    #
-    # def test_all_in_edges_of_node(self):
-    #     self.fail()
-    #
-    # def test_all_out_edges_of_node(self):
-    #     self.fail()
-    #
-    # def test_get_mc(self):
-    #     self.fail()
-    #
-    # def test_add_edge(self):
-    #     self.fail()
+    def test_get_all_v(self):
+        g = graph_creator()
+        v = g.get_all_v()
+        self.assertEqual(10, v.__len__())
+
+    def test_all_in_edges_of_node(self):
+        g = graph_creator()
+        v = g.all_in_edges_of_node(0)
+        self.assertEqual(1, v.__len__())
+        v = g.all_in_edges_of_node(7)
+        self.assertEqual(2, v.__len__())
+
+    def test_all_out_edges_of_node(self):
+        g = graph_creator()
+        v = g.all_out_edges_of_node(0)
+        self.assertEqual(2, v.__len__())
+        v = g.all_out_edges_of_node(1)
+        self.assertEqual(2, v.__len__())
+
+    def test_get_mc(self):
+        g = graph_creator()
+        self.assertEqual(22, g.get_mc())  # 10 for nodes + 12 for edges
+
+    def test_add_edge(self):
+        g = graph_creator()
+        g.add_edge(1, 7, 0.5)
+        v = g.e_size()
+        self.assertEqual(13, v)
+        g.add_edge(4, 3, 1)  # an edge that already exists
+        v = g.e_size()
+        self.assertEqual(13, v)
 
     def test_add_node(self):
         graph = DiGraph()
@@ -55,9 +72,14 @@ class TestDiGraph(TestCase):
         self.assertEqual(2, graph.v_size())
         graph.add_node(1, (4, 5, 0.0))
         self.assertNotEqual(3, graph.v_size())
-    #
-    # def test_remove_node(self):
-    #     self.fail()
-    #
-    # def test_remove_edge(self):
-    #     self.fail()
+
+    def test_remove_node(self):
+        g = graph_creator()
+        g.remove_node(0)
+        v = g.v_size()
+        e = g.e_size()
+        self.assertEqual(9 ,v)
+        self.assertEqual(9, e)
+
+    def test_remove_edge(self):
+        self.fail()

@@ -24,7 +24,7 @@ class DiGraph(GraphInterface):
 
     def e_size(self) -> int:
         ans = 0
-        for k, v in self.out_edges.items():
+        for k, v in self.in_edges.items():
             ans = ans + len(v)
         return ans
 
@@ -32,10 +32,10 @@ class DiGraph(GraphInterface):
         return self.nodes
 
     def all_in_edges_of_node(self, id1: int) -> dict:
-        return self.in_edges[id1]
+        return self.in_edges.get(id1)
 
     def all_out_edges_of_node(self, id1: int) -> dict:
-        return self.out_edges[id1]
+        return self.out_edges.get(id1)
 
     def get_mc(self) -> int:
         return self.MC
@@ -66,8 +66,16 @@ class DiGraph(GraphInterface):
     def remove_node(self, node_id: int) -> bool:
         if node_id not in self.nodes:  # if the node id doesn't exist in the dictionary -> do nothing
             return False
-        for k in self.out_edges[node_id]:  # for all the nodes that have an in edge from the node_id node
-            self.remove_edge(node_id, k)  # delete all the edges
+        sizeout = self.all_out_edges_of_node(node_id)
+        sizein = self.all_in_edges_of_node(node_id)
+        for k in sizeout:  # for all the nodes that have an in edge from the node_id node
+            # self.in_edges[k].pop(node_id)
+            del self.in_edges[k][node_id]  # delete the edge from the in dictionary (dest to src)
+            self.e_size()-1;
+        for j in sizein:
+        #     # self.out_edges[j].pop(node_id)
+            del self.out_edges[j][node_id]  # delete the edge from the out dictionary (src to dest)
+
         del self.nodes[node_id]  # delete the node from the dictionary
         self.MC = self.MC + 1  # increase the MC for the change in the graph
 
