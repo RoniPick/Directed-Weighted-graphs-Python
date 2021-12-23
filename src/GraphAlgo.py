@@ -134,12 +134,12 @@ class GraphAlgo(GraphAlgoInterface):
         length = {}  # for the node's Dijkstra
         ans = {}
         for srckey in self.get_graph().nodes.keys():
-            maximum = math.inf * (-1)
+            maximum = 0
             length = self.Dijkstra(srckey)[0]  # the dictionary of the length
             for destkey in length.values():
-                if maximum < destkey:
-                    maximum = destkey
-
+              #  if maximum < destkey:
+               #     maximum = destkey
+                maximum=max(destkey,maximum)
             ans[srckey] = maximum
 
         minimum = math.inf
