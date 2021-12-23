@@ -4,9 +4,11 @@ import queue
 from typing import List
 from src import GraphInterface
 from src.DiGraph import DiGraph
+from src.Node import Node
 from src.GraphAlgoInterface import GraphAlgoInterface
 import matplotlib.pyplot as plt
 from queue import PriorityQueue
+
 
 class GraphAlgo(GraphAlgoInterface):
 
@@ -65,9 +67,17 @@ class GraphAlgo(GraphAlgoInterface):
             More info:
             https://en.wikipedia.org/wiki/Dijkstra's_algorithm
             """
-        d = self.Dijkstra(id1)
-        ans = list()
-        location = self.graph.nodes
+        dijkstra = self.Dijkstra(id1)
+        dist = dijkstra[0]
+        pointers = dijkstra[1]
+        temp = id2
+        ans = []
+        while temp != id1:  # inserting the nodes in the correct order
+            ans.insert(0, temp)
+            temp = pointers.get(temp)
+
+        ans.insert(0, id1)  # adding the first node to the list
+        return dist.get(id2), ans
 
     def TSP(self, node_lst: List[int]) -> (List[int], float):
         """
@@ -76,22 +86,21 @@ class GraphAlgo(GraphAlgoInterface):
             :return: A list of the nodes id's in the path, and the overall distance
             """
 
+
     def centerPoint(self) -> (int, float):
         """
             Finds the node that has the shortest distance to it's farthest node.
             :return: The nodes id, min-maximum distance
             """
         maximum = 0.0
-        temp = 0.0
+        length = {}  # for the node's Dijkstra
         ans = {}
-        for srckey in self.graph.nodes.keys():
+        for srckey in self.get_graph().nodes.keys():
             maximum = math.inf * (-1)
-            for destkey in self.graph.nodes.keys():
-                if srckey != destkey:
-                    temp = self.shortest_path_dist(srckey, destkey)
-                    self.shortest_path(srckey, destkey)
-                    if maximum < temp:
-                        maximum = temp
+            length = self.Dijkstra(srckey)[0]  # the dictionary of the length
+            for destkey in length.values():
+                if maximum < destkey:
+                    maximum = destkey
 
             ans[srckey] = maximum
 
@@ -101,57 +110,43 @@ class GraphAlgo(GraphAlgoInterface):
             if ans[i] < minimum:
                 minimum = ans[i]
                 minNode = i
-        t = (minNode, minimum)
 
-        return t
-
-    def shortest_path_dist(self, src, dest):
-        if self.isconnected() and src != dest:
-            shortest = self.DijkstraLength(src)
-            return shortest.get(dest)
-        return -1
-
-    def isconnected(self) -> bool:
-        for nodeid in self.graph.nodes:
-            curr = self.graph.nodes[nodeid]
-            if not self.BFS(curr):
-                return False
-
-        return True
-
-    def BFS(self, key): #////ALMOG TODO
-        visited = {}
-        # priority
+        return minNode, minimum
 
     def Dijkstra(self, src):
-        dist = {}
+        self.reset()  # resetting the values of the node's tag and weight before applying a new Dijkstra
+        dist = {}  # a dictionary of distance from src to the nodeid in the dictionary
         prev = {}
-        neighbours= queue.PriorityQueue(maxsize=0)
-
-        for node in self.get_graph().get_all_v():
-            node.weight = math.inf
-            node.tag = 0
-
-        dist[src] = 0
+        neighbours = queue.PriorityQueue(maxsize=0)  # maxsize = 0 -> no limit on the length
+        dist[src] = 0  # distance from node to itself = 0
+        prev[src] = None  # there is no pointer to the node
         neighbours.put(src)
-        while neighbours.not_empty:
-            temp = neighbours.get()
-            # for node in self.get_graph().all_out_edges_of_node(temp)
+        self.get_graph().get_all_v().get(src).tag = 1  # marked as visited
+        while not neighbours.empty():
+            temp = neighbours.get()  # temp value - int
+            for nodeid in self.get_graph().all_out_edges_of_node(temp).keys():
+                if self.relax(temp, nodeid):
+                    dist[nodeid] = self.get_graph().get_all_v().get(nodeid).weight  # if we could update - updating the weight of the node int the dict
+                    prev[nodeid] = temp  # temp pointing to nodeid
+                if self.get_graph().get_all_v().get(nodeid).tag == 0:
+                    self.get_graph().get_all_v().get(nodeid).tag = 1  # marked as visited
+                    neighbours.put(nodeid)  # adding it to the queue
+        return dist, prev
 
+    def relax(self, src: int, dest: int) -> bool:
+        srcweight = self.get_graph().get_all_v().get(src).weight
+        edgeweight = self.get_graph().all_out_edges_of_node(src).get(dest)
 
-
-    def relax(self, src:int, dest:int)-> bool:
-        if self.get_graph().get_all_v().get(dest) <= self.get_graph().nodes.get(src) + self.get_graph().all_out_edges_of_node(src).get(dest):
+        if self.get_graph().get_all_v().get(dest).weight <= srcweight + edgeweight:
             return False
-        d = self.get_graph().nodes.get(dest)
 
+        self.get_graph().get_all_v().get(dest).weight = srcweight + edgeweight
+        return True
 
-
-
-
-    def DijkstraLength(self, src) -> dict:
-        g = DiGraph()
-        g = self.graph
+    def reset(self):
+        for node in self.get_graph().get_all_v().values():
+            node.tag = 0
+            node.weight = math.inf
 
     def plot_graph(self) -> None:
         """
@@ -160,9 +155,9 @@ class GraphAlgo(GraphAlgoInterface):
             Otherwise, they will be placed in a random but elegant manner.
             @return: None
             """
-        x = [1,2,3]
-        y = [2,4,1]
-        plt.plot(x, y, color='indigo', linestyle='-', linewidth = 2, marker='o', markerfacecolor='gray', markersize=15)
+        x = [1, 2, 3]
+        y = [2, 4, 1]
+        plt.plot(x, y, color='indigo', linestyle='-', linewidth=2, marker='o', markerfacecolor='gray', markersize=15)
         plt.xlim()
         plt.ylim()
         plt.xlabel('x - axis')
@@ -170,6 +165,6 @@ class GraphAlgo(GraphAlgoInterface):
         plt.title('OOP Ex3')
         plt.show()
 
-    if __name__ == "__main__":
+    # if __name__ == "__main__":
 
 
