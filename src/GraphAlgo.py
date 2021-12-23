@@ -7,7 +7,6 @@ from src.DiGraph import DiGraph
 from src.Node import Node
 from src.GraphAlgoInterface import GraphAlgoInterface
 import matplotlib.pyplot as plt
-from queue import PriorityQueue
 
 
 class GraphAlgo(GraphAlgoInterface):
@@ -20,24 +19,29 @@ class GraphAlgo(GraphAlgoInterface):
 
     def load_from_json(self, file_name: str) -> bool:
         try:
-            with open(file_name) as f:
-                graph = DiGraph()
-                data = json.load(f)
-            for node in data["nodes"]:
-                if "pos" in node:
-                    pos = tuple(map(float, str(node["pos"]).split(",")))
-                else:
-                    pos = None
-                graph.add_node(node["id"], (node['pos']['x'], node['pos']['y'], node['pos']['Z']))
-            for edge in dict["edges"]:
-                graph.connect(edge["src"], edge["dest"], edge["w"])
-            self.graph = graph
+            with open(file_name, "r") as f:
+                d = json.load(f)
+                nodes = d["Nodes"]
+                edges = d["Edges"]
+                for node in nodes:
+                    if 'pos' in node.keys():
+                        p = node['pos']  # import the pose of the node as a string
+                        position = p.split(",")  # create a new list of the information
+                        z = float(position.pop())
+                        y = float(position.pop())
+                        x = float(position.pop())
+                        self.graph.add_node(int(node["id"]), (x, y, z))
+                    else:
+                        self.graph.add_node(int(node["id"]))
+                for edge in edges:
+                    self.graph.add_edge(int(edge["src"]), int(edge["dest"]), float(edge["w"]))
             return True
+
         except Exception as exception:
             print(exception)
             return False
         finally:
-            file_name.close()  # closing the file
+            f.close()  # closing the file
 
     def save_to_json(self, file_name: str) -> bool:
         with open(file_name, 'w') as file:
@@ -72,6 +76,11 @@ class GraphAlgo(GraphAlgoInterface):
         pointers = dijkstra[1]
         temp = id2
         ans = []
+        node_id2=self.graph.nodes.get(id2)
+
+        if node_id2.weight==(float(math.inf)):
+            return float(math.inf), []
+
         while temp != id1:  # inserting the nodes in the correct order
             ans.insert(0, temp)
             temp = pointers.get(temp)
@@ -85,7 +94,36 @@ class GraphAlgo(GraphAlgoInterface):
             :param node_lst: A list of nodes id's
             :return: A list of the nodes id's in the path, and the overall distance
             """
+        if node_lst is None or len(node_lst) == 0:
+            return None
 
+        nextcity = node_lst[0]  # the closest next city, starting with the first city in the list
+        path = []  # the total path
+        overAllLength = 0  # the length of the total path (weight)
+        # currcity = node_lst[0]  # the city that have the
+        while len(node_lst)-1 > 0:
+            node_lst.remove(nextcity)  # removing the first city in the current list
+            minlength = math.inf
+            currpath = []  # temp path
+            for city in range(len(node_lst)):
+                temp = self.shortest_path(nextcity, node_lst[city])  # temp is a tuple that contains the length and list of the path
+                if temp[0] == math.inf:
+                    break
+                if temp[0] < minlength:
+                    minlength = temp[0]
+                    currpath = temp[1]
+                    currcity = node_lst[city]
+
+            if len(path) == 0:
+                path.extend(currpath)  # adding the path to the end of the list
+            else:
+                currpath.pop(0)
+                path.extend(currpath)  # adding the path to the end of the list without the first one in order to avoid duplicates
+
+            overAllLength = overAllLength + minlength  # adding the length of current path to the total path length
+            nextcity = currcity
+
+        return path, overAllLength
 
     def centerPoint(self) -> (int, float):
         """
@@ -117,20 +155,24 @@ class GraphAlgo(GraphAlgoInterface):
         self.reset()  # resetting the values of the node's tag and weight before applying a new Dijkstra
         dist = {}  # a dictionary of distance from src to the nodeid in the dictionary
         prev = {}
+        visited = {}
         neighbours = queue.PriorityQueue(maxsize=0)  # maxsize = 0 -> no limit on the length
         dist[src] = 0  # distance from node to itself = 0
         prev[src] = None  # there is no pointer to the node
         neighbours.put(src)
-        self.get_graph().get_all_v().get(src).tag = 1  # marked as visited
+        visited[src] = True
+        self.get_graph().get_all_v().get(src).weight = 0
         while not neighbours.empty():
             temp = neighbours.get()  # temp value - int
-            for nodeid in self.get_graph().all_out_edges_of_node(temp).keys():
+            for nodeid in self.graph.all_out_edges_of_node(temp).keys():
                 if self.relax(temp, nodeid):
                     dist[nodeid] = self.get_graph().get_all_v().get(nodeid).weight  # if we could update - updating the weight of the node int the dict
                     prev[nodeid] = temp  # temp pointing to nodeid
-                if self.get_graph().get_all_v().get(nodeid).tag == 0:
-                    self.get_graph().get_all_v().get(nodeid).tag = 1  # marked as visited
+
+                if nodeid not in visited.keys():
+                    visited[nodeid] = True  # marked as visited
                     neighbours.put(nodeid)  # adding it to the queue
+
         return dist, prev
 
     def relax(self, src: int, dest: int) -> bool:
@@ -145,7 +187,6 @@ class GraphAlgo(GraphAlgoInterface):
 
     def reset(self):
         for node in self.get_graph().get_all_v().values():
-            node.tag = 0
             node.weight = math.inf
 
     def plot_graph(self) -> None:

@@ -5,7 +5,7 @@ class Location:
         self.y = 0.0
         self.z = 0.0
 
-    def __int__(self, first, second, third):  # data constructor
+    def __init__(self, first, second, third):  # data constructor
         self.x = first
         self.y = second
         self.z = third

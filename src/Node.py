@@ -3,7 +3,7 @@ from Location import Location
 
 class Node:
 
-    def __init__(self, id, location=None):  # data constructor
+    def __init__(self, id, location):  # data constructor
         self.id = id
         self.weight = 0.0
         self.tag = 0
