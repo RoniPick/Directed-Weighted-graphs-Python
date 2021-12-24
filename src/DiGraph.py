@@ -19,6 +19,9 @@ class DiGraph(GraphInterface):
     #     self.in_edges = graph.in_edges.copy()
     #     self.MC = graph.MC
 
+    def __repr__(self):
+        return f"Graph: |V|={self.v_size()}, |E|={self.edgeSize}"
+
     def v_size(self) -> int:
         return self.nodeSize
 

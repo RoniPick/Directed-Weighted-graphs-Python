@@ -10,5 +10,5 @@ class Node:
         self.location = location  # x: location[0], y: location[1], z: location[2]
 
     def __repr__(self):
-        return f"id:{self.id} location:{self.location}"
+        return f"id:{self.id}"
 
