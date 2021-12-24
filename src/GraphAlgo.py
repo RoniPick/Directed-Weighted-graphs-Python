@@ -20,6 +20,7 @@ class GraphAlgo(GraphAlgoInterface):
     def load_from_json(self, file_name: str) -> bool:
         try:
             with open(file_name, "r") as f:
+                graph = DiGraph()
                 d = json.load(f)
                 nodes = d["Nodes"]
                 edges = d["Edges"]
@@ -30,11 +31,12 @@ class GraphAlgo(GraphAlgoInterface):
                         z = float(position.pop())
                         y = float(position.pop())
                         x = float(position.pop())
-                        self.graph.add_node(int(node["id"]), (x, y, z))
+                        graph.add_node(int(node["id"]), (x, y, z))
                     else:
-                        self.graph.add_node(int(node["id"]))
+                        graph.add_node(int(node["id"]))
                 for edge in edges:
-                    self.graph.add_edge(int(edge["src"]), int(edge["dest"]), float(edge["w"]))
+                    graph.add_edge(int(edge["src"]), int(edge["dest"]), float(edge["w"]))
+            self.graph = graph
             return True
 
         except Exception as exception:
