@@ -1,6 +1,6 @@
 import json
 import math
-import queue
+import heapq
 from typing import List
 from src import GraphInterface
 from src.DiGraph import DiGraph
@@ -76,9 +76,9 @@ class GraphAlgo(GraphAlgoInterface):
         pointers = dijkstra[1]
         temp = id2
         ans = []
-        node_id2=self.graph.nodes.get(id2)
+        node_id2 = self.graph.nodes.get(id2)
 
-        if node_id2.weight==(float(math.inf)):
+        if node_id2.weight == (float(math.inf)):
             return float(math.inf), []
 
         while temp != id1:  # inserting the nodes in the correct order
@@ -100,7 +100,6 @@ class GraphAlgo(GraphAlgoInterface):
         nextcity = node_lst[0]  # the closest next city, starting with the first city in the list
         path = []  # the total path
         overAllLength = 0  # the length of the total path (weight)
-        # currcity = node_lst[0]  # the city that have the
         while len(node_lst)-1 > 0:
             node_lst.remove(nextcity)  # removing the first city in the current list
             minlength = math.inf
@@ -137,15 +136,13 @@ class GraphAlgo(GraphAlgoInterface):
             maximum = 0
             length = self.Dijkstra(srckey)[0]  # the dictionary of the length
             for destkey in length.values():
-              #  if maximum < destkey:
-               #     maximum = destkey
-                maximum=max(destkey,maximum)
+                maximum = max(destkey, maximum)
             ans[srckey] = maximum
 
         minimum = math.inf
         minNode = None
         for i in ans:
-            if ans[i] < minimum:
+            if ans[i] < minimum and ans[i] != 0:
                 minimum = ans[i]
                 minNode = i
 
@@ -156,22 +153,21 @@ class GraphAlgo(GraphAlgoInterface):
         dist = {}  # a dictionary of distance from src to the nodeid in the dictionary
         prev = {}
         visited = {}
-        neighbours = queue.PriorityQueue(maxsize=0)  # maxsize = 0 -> no limit on the length
+        neighbours = [(0, src)]
         dist[src] = 0  # distance from node to itself = 0
         prev[src] = None  # there is no pointer to the node
-        neighbours.put(src)
         visited[src] = True
         self.get_graph().get_all_v().get(src).weight = 0
-        while not neighbours.empty():
-            temp = neighbours.get()  # temp value - int
-            for nodeid in self.graph.all_out_edges_of_node(temp).keys():
-                if self.relax(temp, nodeid):
+        while not len(neighbours) == 0:
+            temp = heapq.heappop(neighbours)  # temp value - int
+            for nodeid in self.graph.all_out_edges_of_node(temp[1]).keys():
+                if self.relax(temp[1], nodeid):
                     dist[nodeid] = self.get_graph().get_all_v().get(nodeid).weight  # if we could update - updating the weight of the node int the dict
-                    prev[nodeid] = temp  # temp pointing to nodeid
+                    prev[nodeid] = temp[1]  # temp pointing to nodeid
 
                 if nodeid not in visited.keys():
                     visited[nodeid] = True  # marked as visited
-                    neighbours.put(nodeid)  # adding it to the queue
+                    heapq.heappush(neighbours, (self.get_graph().get_all_v().get(nodeid).weight, nodeid))  # adding it to the queue
 
         return dist, prev
 
@@ -205,7 +201,5 @@ class GraphAlgo(GraphAlgoInterface):
         plt.ylabel('y - axis')
         plt.title('OOP Ex3')
         plt.show()
-
-    # if __name__ == "__main__":
 
 
