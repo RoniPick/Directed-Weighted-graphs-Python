@@ -166,7 +166,6 @@ class GraphAlgo(GraphAlgoInterface):
                 if self.relax(temp[1], nodeid):
                     dist[nodeid] = self.get_graph().get_all_v().get(nodeid).weight  # if we could update - updating the weight of the node int the dict
                     prev[nodeid] = temp[1]  # temp pointing to nodeid
-
                 if nodeid not in visited.keys():
                     visited[nodeid] = True  # marked as visited
                     heapq.heappush(neighbours, (self.get_graph().get_all_v().get(nodeid).weight, nodeid))  # adding it to the queue
@@ -194,14 +193,23 @@ class GraphAlgo(GraphAlgoInterface):
             Otherwise, they will be placed in a random but elegant manner.
             @return: None
             """
-        x = [1, 2, 3]
-        y = [2, 4, 1]
-        plt.plot(x, y, color='indigo', linestyle='-', linewidth=2, marker='o', markerfacecolor='gray', markersize=15)
-        plt.xlim()
-        plt.ylim()
-        plt.xlabel('x - axis')
-        plt.ylabel('y - axis')
+        g = self.get_graph()
         plt.title('OOP Ex3')
-        plt.show()
+        x = []
+        y = []
+        for src in g.get_all_v().values():
+            x.append(src.location[0])
+            y.append(src.location[1])
+        plt.plot(x, y, 'ro', color="violet")
+        for i in range(len(x)):
+            plt.annotate(i, xy=(x[i] * 0.999992, y[i] * 1.000004))
+        for node in g.get_all_v().keys():
+            for dest in g.all_out_edges_of_node(node).keys():
+                destX = g.get_all_v().get(dest).location[0]
+                destY = g.get_all_v().get(dest).location[1]
+                srcX = g.get_all_v().get(node).location[0]
+                srcY = g.get_all_v().get(node).location[1]
+                plt.annotate("", xy=(srcX, srcY), xytext=(destX, destY), arrowprops={'arrowstyle': "<-", 'lw':2})
 
+        plt.show()
 

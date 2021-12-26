@@ -13,11 +13,6 @@ class DiGraph(GraphInterface):
         self.MC = 0  # a counter of all the changes in the graph
         self.nodeSize = 0
         self.edgeSize = 0
-    # def __init__(self, graph):  # an object constructor
-    #     self.nodes = graph.nodes.copy()
-    #     self.out_edges = graph.out_edges.copy()
-    #     self.in_edges = graph.in_edges.copy()
-    #     self.MC = graph.MC
 
     def __repr__(self):
         return f"Graph: |V|={self.v_size()}, |E|={self.edgeSize}"
@@ -73,11 +68,9 @@ class DiGraph(GraphInterface):
         for k in sizeout:  # for all the nodes that have an in edge from the node_id node
             del self.in_edges[k][node_id]  # delete the edge from the in dictionary (dest to src)
             self.edgeSize -= 1
-
         for j in sizein:
             del self.out_edges[j][node_id]  # delete the edge from the out dictionary (src to dest)
             self.edgeSize -= 1
-
         self.all_in_edges_of_node(node_id).clear()
         self.all_out_edges_of_node(node_id).clear()
         del self.nodes[node_id]  # delete the node from the dictionary
