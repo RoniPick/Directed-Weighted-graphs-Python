@@ -60,7 +60,6 @@ def graph_creator_c():
 
 
 class TestGraphAlgo(unittest.TestCase):
-
     def test_shortest_path_1(self):
         """
         find the shortest path between:
