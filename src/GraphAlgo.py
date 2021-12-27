@@ -141,6 +141,9 @@ class GraphAlgo(GraphAlgoInterface):
         for srckey in self.get_graph().nodes.keys():
             maximum = 0
             length = self.Dijkstra(srckey)[0]  # the dictionary of the length
+            if len(length) < self.graph.v_size():  # if the graph is not connected - we will get less nodes
+                return srckey, math.inf
+
             for destkey in length.values():
                 maximum = max(destkey, maximum)
             ans[srckey] = maximum
