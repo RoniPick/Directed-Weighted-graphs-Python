@@ -104,5 +104,12 @@ def check3():
     g_algo.plot_graph()
 
 
+def enter_json(file_name: str):
+    graph = GraphAlgo()
+    graph.load_from_json(file_name)
+    graph.plot_graph()
+
+
 if __name__ == '__main__':
     check()
+    # enter_json()
